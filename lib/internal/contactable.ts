@@ -628,12 +628,12 @@ async function getPttBuffer(file: string | Buffer, ffmpeg = "ffmpeg"): Promise<B
 function audioTrans(file: string, ffmpeg = "ffmpeg"): Promise<Buffer> {
 	return new Promise((resolve, reject) => {
 		const tmpfile = path.join(TMP_DIR, uuid())
-		exec(`${ffmpeg} -y -i "${file}" -ac 1 -ar 8000 -f amr "${tmpfile}"`, async (error, stdout, stderr) => {
+		exec(`${ffmpeg} -y -i "${ffmpeg} -i "${file}" -f s16le -ac 1 -ar 24000 "${tmpfile}"`, async (error, stdout, stderr) => {
 			try {
 				const amr = await fs.promises.readFile(tmpfile)
 				resolve(amr)
 			} catch {
-				reject(new ApiRejection(ErrorCode.FFmpegPttTransError, "音频转码到amr失败，请确认你的ffmpeg可以处理此转换"))
+				reject(new ApiRejection(ErrorCode.FFmpegPttTransError, "音频转码到仍然amr失败，请确认你的ffmpeg可以处理此转换"))
 			} finally {
 				fs.unlink(tmpfile, NOOP)
 			}
